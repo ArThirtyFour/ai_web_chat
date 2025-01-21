@@ -1,4 +1,5 @@
 import google.generativeai as genai
+
 api_Key = 'da'
 
 genai.configure(api_key=api_Key)
