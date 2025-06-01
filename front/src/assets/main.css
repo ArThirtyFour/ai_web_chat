@@ -1,4 +1,40 @@
 body {
-    background: linear-gradient(299deg, rgba(0,0,0,1) 0%, rgba(84,212,68,1) 48%, rgba(0,0,0,1) 100%);
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     min-height: 100vh; 
+    color: #212529;
+}
+
+.card {
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border: none !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    border-color: #86b7fe;
+}
+
+.markdown-body {
+    color: #212529;
+}
+
+.markdown-body pre {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+.markdown-body code {
+    color: #d63384;
+    background-color: #f8f9fa;
 }
