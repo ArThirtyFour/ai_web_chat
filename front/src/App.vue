@@ -1,63 +1,122 @@
 <template>
-  <div class="main">
-    <Main/>
-    <Input :get_text="get_text"/>
-    <div class="button-container">
-      <button @click='send_text(zapros)' v-if="zapros !== ''">Отправить запрос</button>
-      <button disabled v-else>Напишите запрос!</button>
-      <button @click="reset_text">Очистить историю</button>
-      <br>
-      <button @click="delete_text">Убрать текст</button>
+  <div class="container py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <Main/>
+            <Input :get_text="get_text"/>
+            <div class="d-flex gap-2 justify-content-center mt-3">
+              <button class="btn btn-primary" @click='send_text(zapros)' :disabled="zapros === ''">
+                Отправить запрос
+              </button>
+              <button class="btn btn-warning" @click="reset_text">
+                Очистить историю
+              </button>
+              <button class="btn btn-danger" @click="delete_text">
+                Убрать текст
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">История сообщений</h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="chat-history">
+              <div v-for="(message, index) in chatHistory" :key="index" class="message-container">
+                <div class="message query">
+                  <div class="message-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Ваш запрос</h6>
+                    <span class="badge bg-primary">{{ message.timestamp }}</span>
+                  </div>
+                  <div class="message-content">
+                    {{ message.query }}
+                  </div>
+                </div>
+                
+                <div class="message response" v-if="message.response">
+                  <div class="message-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Ответ</h6>
+                    <span class="badge bg-success">{{ message.timestamp }}</span>
+                  </div>
+                  <div class="message-content markdown-body" v-html="message.response"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="da" v-html="result"></div>  
 </template>
 
-
-<style scoped>
-.main {
-  margin-top: 20px; 
-  margin-left: 20px;
-  margin-right: 20px;
-  border: 3px solid rgb(204, 204, 204);
-  border-radius: 20px;
-  background-color: rgba(21, 143, 17, 0.275);
-}
-.button-container {
-  display: flex;
-  justify-content: center; 
-  margin-top: 10px; 
+<style>
+.markdown-body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  line-height: 1.6;
 }
 
-button {
-  color: white;
-  background-color: aquamarine;
-  text-align: center;
-  margin: 0 5px;
-  border-radius: 20px;
-  border: 3px solid white;
-  margin-bottom: 10px;
-  font-size: 20px;
-  font-family: 'Courier New', Courier, monospace;
+.markdown-body pre {
+  background-color: #f6f8fa;
+  border-radius: 6px;
+  padding: 16px;
 }
 
-button:disabled {
-  background-color: rgba(6, 243, 191, 0.403);
+.markdown-body code {
+  background-color: rgba(175, 184, 193, 0.2);
+  border-radius: 6px;
+  padding: 0.2em 0.4em;
 }
 
-button:hover {
-  box-shadow: 2px rgb(0, 0, 0);
-  
-  color:black
+.badge {
+  font-size: 0.8rem;
+  padding: 0.5em 0.8em;
 }
 
+.chat-history {
+  max-height: 600px;
+  overflow-y: auto;
+}
 
-.da {
-  margin:20px;
-  border-radius: 10px;
-  border: 3px solid black;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: rgba(86, 86, 86, 0.403);
+.message-container {
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.message-container:last-child {
+  border-bottom: none;
+}
+
+.message {
+  margin-bottom: 1rem;
+}
+
+.message:last-child {
+  margin-bottom: 0;
+}
+
+.message-header {
+  margin-bottom: 0.5rem;
+}
+
+.message-content {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.query .message-content {
+  background-color: #e9ecef;
+}
+
+.response .message-content {
+  background-color: #f8f9fa;
 }
 </style>
 
@@ -72,7 +131,8 @@ export default {
   data() {
     return {
       zapros: '',
-      result: ''
+      result: '',
+      chatHistory: []
     }
   },
   methods: {
@@ -80,12 +140,27 @@ export default {
       this.zapros = text;
     },
     send_text(da) {
+      const timestamp = new Date().toLocaleTimeString();
+      const query = da;
+      
+      // Добавляем запрос в историю
+      this.chatHistory.push({
+        query,
+        timestamp,
+        response: null
+      });
+
       axios.post('http://127.0.0.1:5000/api/v1', new URLSearchParams({ zapros: da }))
       .then((response) => {
         if (response.data.status === 'yes') {
-          this.result = marked(response.data.answer)
+          const responseHtml = marked(response.data.answer);
+          // Обновляем последний элемент истории с ответом
+          this.chatHistory[this.chatHistory.length - 1].response = responseHtml;
+          this.result = responseHtml;
         } else {
-          this.result = 'Ошибка! ' + response.data.answer
+          const errorMessage = 'Ошибка! ' + response.data.answer;
+          this.chatHistory[this.chatHistory.length - 1].response = errorMessage;
+          this.result = errorMessage;
         }
       });
     },
@@ -98,7 +173,9 @@ export default {
       });
     },
     delete_text() {
-      this.result = ''
+      this.result = '';
+      this.zapros = '';
+      this.chatHistory = [];
     }
   }
 }

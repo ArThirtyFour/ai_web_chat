@@ -1,12 +1,14 @@
 <template>
-<h1>Привет , этот сайт создан для ИИ , я хз зачем ну и ладно</h1>
+  <div class="text-center mb-4">
+    <h1 class="display-4">AI Chat Assistant</h1>
+    <p class="lead text-muted">Задайте свой вопрос, и я постараюсь помочь!</p>
+  </div>
 </template>
 
 <style scoped>
 h1 {
-    color: white;
-    text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+  color: #2c3e50;
+  font-weight: 600;
 }
 </style>
 

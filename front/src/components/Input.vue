@@ -1,34 +1,32 @@
 <template>
-    <div class="razdel">
-        <h2>Вводи свой запрос сюда:</h2>
-        <input placeholder="Здесь запрос..." @input="get_text($event.target.value)" v-model="zarpos">
+  <div class="mb-4">
+    <div class="form-floating">
+      <input 
+        type="text" 
+        class="form-control form-control-lg" 
+        id="queryInput"
+        placeholder="Введите ваш запрос..."
+        @input="get_text($event.target.value)" 
+        v-model="zapros"
+      >
+      <label for="queryInput">Введите ваш запрос...</label>
     </div>
-    
+  </div>
 </template>
-  
-<style scoped>
-.razdel {
-    text-align: center;
-    margin: 10px;
-}
-input {
-    width: 400px;
-    padding: 10px; 
-    font-size: 10px; 
-    border-radius: 10px;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    font-size:20px;
-  }
-</style>
-  
+
 <script>
 export default {
-    props: {
-        get_text: {
-            type:Function,
-            required: true
-        }
+  data() {
+    return {
+      zapros: ''
     }
+  },
+  props: {
+    get_text: {
+      type: Function,
+      required: true
+    }
+  }
 }
 </script>
   
